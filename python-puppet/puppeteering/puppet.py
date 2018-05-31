@@ -10,10 +10,10 @@ def translate(command_name):
     return NO_SUCH_COMMAND
 
 
-def parse_command(json_text):
-    if json_text == '':
+def parse_command(command_text):
+    if command_text == '':
         return NO_SUCH_COMMAND, ()
-    request = json.loads(json_text)
+    request = json.loads('{"line":%s}' % command_text)
     line = request['line']
     return translate(line[0]), tuple(line[1:])
 

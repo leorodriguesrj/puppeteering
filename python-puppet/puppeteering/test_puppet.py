@@ -23,7 +23,11 @@ class TestParseCommand(unittest.TestCase):
         cmd, parameters = parse_command('["reboot", 42, "ms"]')
         self.assertEquals(cmd, CMD_REBOOT)
         self.assertEquals(parameters, (42, 'ms'))
-
+    
+    def test_parse_getenv(self):
+        cmd, parameters = parse_command('["get_env", "HTTP_PROXY"]')
+        self.assertEquals(cmd, CMD_GET_ENV)
+        self.assertEquals(parameters, ('HTTP_PROXY',))
 
 if __name__ == '__main__':
     unittest.main()

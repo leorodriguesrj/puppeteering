@@ -12,8 +12,7 @@ def translate(command_name):
     return NO_SUCH_COMMAND
 
 def parse_request(request='', translate_name=translate):
-    if request == '':
-        return NO_SUCH_COMMAND, ()
+    if request == '': return NO_SUCH_COMMAND, ()
     request = json.loads('{"content":%s}' % request)
     content = request['content']
     return translate_name(content[0]), tuple(content[1:])

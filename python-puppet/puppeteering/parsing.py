@@ -11,12 +11,12 @@ def translate(command_name):
         return CMD_GET_ENV
     return NO_SUCH_COMMAND
 
-def parse_command(command_text, parse_operation = translate):
-    if command_text == '':
+def parse_request(request='', translate_name=translate):
+    if request == '':
         return NO_SUCH_COMMAND, ()
-    request = json.loads('{"line":%s}' % command_text)
-    line = request['line']
-    return parse_operation(line[0]), tuple(line[1:])
+    request = json.loads('{"content":%s}' % request)
+    content = request['content']
+    return translate_name(content[0]), tuple(content[1:])
 
 def run_command(commands):
     return RES_END_OF_BUFFER

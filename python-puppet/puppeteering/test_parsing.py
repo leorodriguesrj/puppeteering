@@ -5,38 +5,40 @@ import parsing
 import unittest
 
 
-class TestTranslate(unittest.TestCase):
-    def test_command_name_is_unknown(self):
-        self.assertEquals(translate(''), NO_SUCH_COMMAND)
+class TestResolveCommand(unittest.TestCase):
+    def test_name_is_not_given(self):
+        self.assertEquals(resolve_command(), empty_command)
     
-    def test_command_name_is_reboot(self):
-        self.assertEquals(translate('reboot'), CMD_REBOOT)
+    def test_name_is_not_found(self):
+        self.assertEquals(resolve_command('cmd_x'), empty_command)
     
-    def test_command_name_is_get_env(self):
-        self.assertEquals(translate('get_env'), CMD_GET_ENV)
+    def test_name_is_found(self):
+        module = __import__('os')
+        self.assertEquals(resolve_command('getenv', module), module.getenv)
 
 
 class TestParseRequest(unittest.TestCase):
-    def test_returns_no_such_command_for_empty_string(self):
+    def test_request_is_empty(self):
         cmd, parameters = parse_request('')
-        self.assertEquals(cmd, NO_SUCH_COMMAND)
+        self.assertEquals(cmd, empty_command)
         self.assertEquals(parameters, ())
 
-    def test_parse_command_with_empty_parameter_list(self):
-        parse_ivk = MagicMock(return_value=112358)
+    def test_request_carries_no_arguments(self):
+        parse_ivk = MagicMock(return_value='implementation of cmd_x')
         cmd, parameters = parse_request('["cmd_x"]', parse_ivk)
-        self.assertEquals(cmd, 112358)
+        self.assertEquals(cmd, 'implementation of cmd_x')
         self.assertEquals(parameters, ())
         self.assertEquals(parse_ivk.call_count, 1)
         self.assertEquals(parse_ivk.call_args_list, [call('cmd_x')])
 
-    def test_parse_command_parameters(self):
-        parse_ivk = MagicMock(return_value=132134)
+    def test_request_carries_some_arguments(self):
+        parse_ivk = MagicMock(return_value='implementation of cmd_y')
         cmd, parameters = parse_request('["cmd_y", 42, 7, 1.618033]', parse_ivk)
-        self.assertEquals(cmd, 132134)
+        self.assertEquals(cmd, 'implementation of cmd_y')
         self.assertEquals(parameters, (42, 7, 1.618033))
         self.assertEquals(parse_ivk.call_count, 1)
         self.assertEquals(parse_ivk.call_args_list, [call('cmd_y')])
+
 
 if __name__ == '__main__':
     unittest.main()

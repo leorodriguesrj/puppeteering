@@ -1,21 +1,19 @@
 import json
+import sys
 
-NO_SUCH_COMMAND = 0
-CMD_REBOOT = 1
-CMD_GET_ENV = 2
+def empty_command():
+    pass
 
-def translate(command_name):
-    if command_name == 'reboot':
-        return CMD_REBOOT
-    if command_name == 'get_env':
-        return CMD_GET_ENV
-    return NO_SUCH_COMMAND
+def resolve_command(command_name='empty_command', module=sys.modules[__name__]):
+    if hasattr(module, command_name):
+        return getattr(module, command_name)
+    return empty_command
 
-def parse_request(request='', translate_name=translate):
-    if request == '': return NO_SUCH_COMMAND, ()
+def parse_request(request='', resolve_command=resolve_command):
+    if request == '': return empty_command, ()
     request = json.loads('{"content":%s}' % request)
     content = request['content']
-    return translate_name(content[0]), tuple(content[1:])
+    return resolve_command(content[0]), tuple(content[1:])
 
 def run_command(commands):
     return RES_END_OF_BUFFER

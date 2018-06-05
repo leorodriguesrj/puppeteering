@@ -1,7 +1,6 @@
 from parsing import *
 from mock import MagicMock, call
 
-import parsing
 import unittest
 
 
